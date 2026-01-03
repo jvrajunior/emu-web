@@ -1,22 +1,22 @@
 {
     "09610434-1ea6-4835-a2fa-7371ea1c7317": {
-        "file": "roms/sonic-the-hedgehog.md",
+        "file": "roms/sonic-the-hedgehog.rom",
         "name": "Sonic the Hedgehog"
     },
     "fdad82db-c45f-48a2-96ec-5b95dcb701bc": {
-        "file": "roms/ultimate-mortal-kombat-3.md",
+        "file": "roms/ultimate-mortal-kombat-3.rom",
         "name": "Ultimate Mortal Kombat 3"
     },
     "361de6ed-34d0-4afd-b8b5-3905f0b4d0b0": {
-        "file": "roms/street-fighter-2-special-champion-edition.md",
+        "file": "roms/street-fighter-2-special-champion-edition.rom",
         "name": "Street Fighter II - Special Champion Edition"
     },
     "1c046568-0aa8-4a94-9914-f61aeec7a590": {
-        "file": "roms/streets-of-rage-2.md",
+        "file": "roms/streets-of-rage-2.rom",
         "name": "Streets of Rage 2"
     },
     "e26bec31-fec3-4428-8d0d-0d7813e31d16": {
-        "file": "roms/aladdin.md",
+        "file": "roms/aladdin.rom",
         "name": "Aladdin"
     }
 }
