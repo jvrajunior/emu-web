@@ -1,0 +1,218 @@
+/* Mega Drive Emulator Styles */
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    color: #333;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+h1 {
+    text-align: center;
+    color: white;
+    margin-bottom: 30px;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+}
+
+#game-container {
+    background: white;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    min-height: 400px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Game List Styles */
+.game-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+    width: 100%;
+}
+
+.game-card {
+    display: block;
+    background: #f8f9fa;
+    border: 2px solid #e9ecef;
+    border-radius: 8px;
+    padding: 20px;
+    text-decoration: none;
+    color: #333;
+    transition: all 0.3s ease;
+    text-align: center;
+}
+
+.game-card:hover {
+    border-color: #00d4ff;
+    background: #e3f2fd;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.game-card h3 {
+    margin: 0;
+    font-size: 1.2em;
+}
+
+/* Mode Selection Styles */
+.mode-selection {
+    text-align: center;
+    max-width: 500px;
+    width: 100%;
+}
+
+.mode-selection h2 {
+    color: #333;
+    margin-bottom: 10px;
+}
+
+.mode-selection p {
+    color: #666;
+    margin-bottom: 30px;
+}
+
+.mode-buttons {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.mode-btn {
+    padding: 15px 30px;
+    border: none;
+    border-radius: 8px;
+    font-size: 1.1em;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    min-width: 200px;
+}
+
+.normal-btn {
+    background: #28a745;
+    color: white;
+}
+
+.normal-btn:hover {
+    background: #218838;
+    transform: translateY(-2px);
+}
+
+.fullscreen-btn {
+    background: #007bff;
+    color: white;
+}
+
+.fullscreen-btn:hover {
+    background: #0056b3;
+    transform: translateY(-2px);
+}
+
+/* Error Message Styles */
+.error-message {
+    text-align: center;
+    color: #dc3545;
+}
+
+.error-message h2 {
+    color: #dc3545;
+    margin-bottom: 15px;
+}
+
+.error-message a {
+    color: #007bff;
+    text-decoration: none;
+}
+
+.error-message a:hover {
+    text-decoration: underline;
+}
+
+/* Game Container */
+#game {
+    width: 100%;
+    height: 100%;
+    min-height: 400px;
+}
+
+/* Media Queries para Responsividade */
+@media (max-width: 768px) {
+    .container {
+        padding: 15px;
+    }
+    
+    h1 {
+        font-size: 1.8em;
+        margin-bottom: 20px;
+    }
+    
+    .game-list {
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 15px;
+    }
+    
+    .game-card {
+        padding: 15px;
+    }
+    
+    .game-card h3 {
+        font-size: 1.1em;
+    }
+    
+    .mode-buttons {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .mode-btn {
+        min-width: 250px;
+        width: 100%;
+        max-width: 300px;
+    }
+}
+
+@media (max-width: 480px) {
+    .container {
+        padding: 10px;
+    }
+    
+    h1 {
+        font-size: 1.5em;
+        margin-bottom: 15px;
+    }
+    
+    #game-container {
+        padding: 15px;
+    }
+    
+    .game-list {
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+    
+    .game-card {
+        padding: 12px;
+    }
+    
+    .mode-selection h2 {
+        font-size: 1.3em;
+    }
+    
+    .mode-btn {
+        padding: 12px 20px;
+        font-size: 1em;
+        min-width: 200px;
+    }
+}
