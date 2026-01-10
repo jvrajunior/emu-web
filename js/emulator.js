@@ -1,9 +1,3 @@
-/**
- * Mega Drive Web Emulator
- * Módulo principal de gerenciamento do emulador
- */
-
-// Banco de dados de ROMs (carregado do JSON)
 let ROM_DATABASE = {};
 
 /**
@@ -23,149 +17,111 @@ async function loadRomDatabase() {
     }
 }
 
-/**
- * Obtém parâmetros da URL
- * @returns {Object} Objeto com romId e fullscreen
- */
 function getUrlParams() {
     const params = new URLSearchParams(window.location.search);
-    return {
-        romId: params.get('rom'),
-        fullscreen: params.get('fullscreen') === 'true' || params.get('fullscreen') === '1'
-    };
+    return params.get('rom');
 }
 
-/**
- * Mostra a lista de jogos disponíveis
- */
-function showGameList() {
+function showGameStart(rom) {
     const container = document.getElementById('game-container');
-    let html = '<div class="game-list">';
-    
-    for (const [id, rom] of Object.entries(ROM_DATABASE)) {
-        
-        html += `
-            <a href="?rom=${id}" class="game-card">
-                <h3>${rom.name}</h3>
-            </a>
-        `;
-    }
-    
-    html += '</div>';
-    container.innerHTML = html;
+    container.innerHTML = `
+        <div class="game-start">
+            <button id="start-game-btn" class="start-button">Jogar</button>
+            <button id="help-btn" class="help-button">❓ Ajuda</button>
+        </div>
+    `;
+
+    document.getElementById('start-game-btn').addEventListener('click', () => loadEmulator(rom));
+    document.getElementById('help-btn').addEventListener('click', showHelpModal);
 }
 
-/**
- * Mostra mensagem de erro
- * @param {string} message - Mensagem de erro
- */
+function showHelpModal() {
+    const container = document.getElementById('game-container');
+    container.innerHTML = `
+        <div class="help-modal">
+            <div class="help-content">
+                <h2>❓ Como Usar</h2>
+                <div class="help-text">
+                    <p><strong>🎮 Para Jogar:</strong><br>
+                    Clique em "Jogar" para iniciar automaticamente em tela cheia.</p>
+                    
+                    <p><strong>🎯 Controles:</strong><br>
+                    Use setas do teclado ou toque na tela (mobile).</p>
+                    
+                    <p><strong>📱 Compatibilidade:</strong><br>
+                    Funciona em computadores, tablets e smartphones.</p>
+                </div>
+                <button id="back-btn" class="back-button">← Voltar</button>
+            </div>
+        </div>
+    `;
+
+    document.getElementById('back-btn').addEventListener('click', () => {
+        const romId = getUrlParams();
+        if (romId && ROM_DATABASE[romId]) {
+            showGameStart(ROM_DATABASE[romId]);
+        }
+    });
+}
+
 function showError(message) {
     const container = document.getElementById('game-container');
     container.innerHTML = `
         <div class="error-message">
             <h2>⚠️ Erro</h2>
             <p>${message}</p>
-            <p style="margin-top: 15px;"><a href="?">← Voltar para lista de jogos</a></p>
         </div>
     `;
 }
 
-/**
- * Inicializa o emulador com a ROM especificada
- * @param {Object} rom - Objeto com informações da ROM
- * @param {boolean} fullscreen - Se deve iniciar em tela cheia
- */
-function initEmulator(rom, fullscreen) {
-    if (fullscreen) {
-        // Se fullscreen foi solicitado, inicia diretamente
-        loadEmulator(rom, true);
-    } else {
-        // Se modo normal, mostra opções para o usuário
-        showModeSelection(rom);
-    }
-}
-
-/**
- * Mostra opções de modo de jogo (normal ou fullscreen)
- * @param {Object} rom - Objeto com informações da ROM
- */
-function showModeSelection(rom) {
+function showLoading() {
     const container = document.getElementById('game-container');
     container.innerHTML = `
-        <div class="mode-selection">
-            <h2>🎮 ${rom.name}</h2>
-            <p>Escolha o modo de jogo:</p>
-            <div class="mode-buttons">
-                <button id="start-normal-btn" class="mode-btn normal-btn">
-                    ▶ Jogar em Modo Normal
-                </button>
-                <button id="start-fullscreen-btn" class="mode-btn fullscreen-btn">
-                    ▶ Jogar em Fullscreen
-                </button>
-            </div>
+        <div class="loading">
+            <div class="loading-spinner"></div>
+            <p>Carregando...</p>
         </div>
     `;
-
-    document.getElementById('start-normal-btn').addEventListener('click', () => {
-        container.innerHTML = '<div id="game"></div>';
-        loadEmulator(rom, false);
-    });
-
-    document.getElementById('start-fullscreen-btn').addEventListener('click', () => {
-        container.innerHTML = '<div id="game"></div>';
-        loadEmulator(rom, true);
-    });
 }
 
-/**
- * Carrega o EmulatorJS com as configurações
- * @param {Object} rom - Objeto com informações da ROM
- * @param {boolean} fullscreen - Se deve iniciar em tela cheia
- */
-function loadEmulator(rom, fullscreen) {
-    // Configuração do EmulatorJS
+function loadEmulator(rom) {
+    showLoading();
+
     window.EJS_player = '#game';
     window.EJS_core = 'segaMD';
     window.EJS_gameUrl = rom.file;
     window.EJS_gameName = rom.name;
     window.EJS_pathtodata = 'https://cdn.emulatorjs.org/stable/data/';
     window.EJS_startOnLoaded = true;
-    window.EJS_fullscreenOnLoaded = fullscreen;
+    window.EJS_fullscreenOnLoaded = true;
     window.EJS_language = 'pt-BR';
-    window.EJS_color = '#00d4ff';
+    window.EJS_color = '#fff';
+    window.EJS_Buttons = {
+        'fullscreen': true
+    }
 
-    // Carrega o loader do EmulatorJS
-    const script = document.createElement('script');
-    script.src = 'https://cdn.emulatorjs.org/stable/data/loader.js';
-    document.body.appendChild(script);
+    setTimeout(() => {
+        const container = document.getElementById('game-container');
+        container.innerHTML = '<div id="game"></div>';
+
+        const script = document.createElement('script');
+        script.src = 'https://cdn.emulatorjs.org/stable/data/loader.js';
+        document.body.appendChild(script);
+    }, 1000);
 }
 
-/**
- * Inicialização principal do emulador
- */
 async function init() {
-    // Carrega o banco de dados de ROMs
     const loaded = await loadRomDatabase();
-    
-    if (!loaded) {
-        showError('Não foi possível carregar a lista de jogos. Tente novamente mais tarde.');
+    const romId = getUrlParams();
+
+    if (!romId) return;
+
+    if (!ROM_DATABASE[romId]) {
+        showError(`ROM "${romId}" não encontrada.`);
         return;
     }
 
-    // Obtém parâmetros da URL
-    const { romId, fullscreen } = getUrlParams();
-
-    if (!romId) {
-        // Sem parâmetro de ROM, mostra lista de jogos
-        showGameList();
-    } else if (!ROM_DATABASE[romId]) {
-        // ROM não encontrada
-        showError(`ROM "${romId}" não encontrada. Verifique o ID informado.`);
-    } else {
-        // Inicia o emulador com a ROM selecionada
-        initEmulator(ROM_DATABASE[romId], fullscreen);
-    }
+    showGameStart(ROM_DATABASE[romId]);
 }
 
-// Inicia quando o DOM estiver pronto
 document.addEventListener('DOMContentLoaded', init);

@@ -1,218 +1,190 @@
-/* Mega Drive Emulator Styles */
-
-body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+* {
     margin: 0;
     padding: 0;
-    min-height: 100vh;
-    color: #333;
+    box-sizing: border-box;
 }
 
-.container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 20px;
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: #1a1a1a;
+    color: #fff;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    padding: 0;
 }
 
 h1 {
     text-align: center;
-    color: white;
-    margin-bottom: 30px;
-    text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+    font-size: clamp(1.5rem, 4vw, 2rem);
+    margin-bottom: 0;
+    padding: 1rem;
+    font-weight: 600;
 }
 
 #game-container {
-    background: white;
-    border-radius: 10px;
-    padding: 20px;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-    min-height: 400px;
+    flex: 1;
     display: flex;
     align-items: center;
     justify-content: center;
+    padding: 0;
 }
 
-/* Game List Styles */
-.game-list {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 20px;
-    width: 100%;
+#game {
+    width: 100vw;
+    height: 70vh;
+    max-width: none;
+    aspect-ratio: unset;
+    border-radius: 0;
+    overflow: hidden;
+    background: #000;
 }
 
-.game-card {
-    display: block;
-    background: #f8f9fa;
-    border: 2px solid #e9ecef;
-    border-radius: 8px;
-    padding: 20px;
-    text-decoration: none;
-    color: #333;
-    transition: all 0.3s ease;
+.game-start {
     text-align: center;
-}
-
-.game-card:hover {
-    border-color: #00d4ff;
-    background: #e3f2fd;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-}
-
-.game-card h3 {
-    margin: 0;
-    font-size: 1.2em;
-}
-
-/* Mode Selection Styles */
-.mode-selection {
-    text-align: center;
-    max-width: 500px;
-    width: 100%;
-}
-
-.mode-selection h2 {
-    color: #333;
-    margin-bottom: 10px;
-}
-
-.mode-selection p {
-    color: #666;
-    margin-bottom: 30px;
-}
-
-.mode-buttons {
     display: flex;
-    gap: 15px;
-    justify-content: center;
-    flex-wrap: wrap;
+    flex-direction: column;
+    gap: 1.5rem;
+    align-items: center;
 }
 
-.mode-btn {
-    padding: 15px 30px;
+.start-button {
+    background: #fff;
+    color: #000;
     border: none;
-    border-radius: 8px;
-    font-size: 1.1em;
-    font-weight: bold;
+    border-radius: 50px;
+    padding: 1rem 2rem;
+    font-size: 1.1rem;
+    font-weight: 600;
     cursor: pointer;
-    transition: all 0.3s ease;
-    min-width: 200px;
+    transition: transform 0.2s;
+    min-width: 120px;
 }
 
-.normal-btn {
-    background: #28a745;
-    color: white;
+.start-button:hover {
+    transform: scale(1.05);
 }
 
-.normal-btn:hover {
-    background: #218838;
-    transform: translateY(-2px);
+.help-button {
+    background: transparent;
+    color: #888;
+    border: 1px solid #444;
+    border-radius: 25px;
+    padding: 0.75rem 1.5rem;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.2s;
 }
 
-.fullscreen-btn {
-    background: #007bff;
-    color: white;
+.help-button:hover {
+    background: #333;
+    color: #fff;
 }
 
-.fullscreen-btn:hover {
-    background: #0056b3;
-    transform: translateY(-2px);
+.help-modal {
+    text-align: center;
+    max-width: 400px;
+    width: 100%;
 }
 
-/* Error Message Styles */
+.help-content {
+    background: #222;
+    padding: 2rem;
+    border-radius: 12px;
+    margin-bottom: 1rem;
+}
+
+.help-content h2 {
+    margin-bottom: 1.5rem;
+    font-size: 1.3rem;
+}
+
+.help-text {
+    text-align: left;
+    line-height: 1.6;
+    margin-bottom: 1.5rem;
+    color: #ccc;
+}
+
+.help-text p {
+    margin-bottom: 1rem;
+}
+
+.help-text strong {
+    color: #fff;
+}
+
+.back-button {
+    background: transparent;
+    color: #888;
+    border: 1px solid #444;
+    border-radius: 25px;
+    padding: 0.75rem 1.5rem;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.back-button:hover {
+    background: #333;
+    color: #fff;
+}
+
 .error-message {
     text-align: center;
-    color: #dc3545;
+    color: #ff6b6b;
+    padding: 2rem;
 }
 
 .error-message h2 {
-    color: #dc3545;
-    margin-bottom: 15px;
+    margin-bottom: 1rem;
+    font-size: 1.2rem;
 }
 
-.error-message a {
-    color: #007bff;
-    text-decoration: none;
+.loading {
+    text-align: center;
+    color: #888;
+    padding: 2rem;
 }
 
-.error-message a:hover {
-    text-decoration: underline;
+.loading-spinner {
+    width: 32px;
+    height: 32px;
+    border: 3px solid #333;
+    border-top: 3px solid #fff;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 1rem;
 }
 
-/* Game Container */
-#game {
-    width: 100%;
-    height: 100%;
-    min-height: 400px;
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
 }
 
-/* Media Queries para Responsividade */
+/* Mobile optimizations */
 @media (max-width: 768px) {
-    .container {
-        padding: 15px;
+    body {
+        padding: 0;
     }
     
-    h1 {
-        font-size: 1.8em;
-        margin-bottom: 20px;
+    .help-content {
+        padding: 1.5rem;
     }
     
-    .game-list {
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-        gap: 15px;
-    }
-    
-    .game-card {
-        padding: 15px;
-    }
-    
-    .game-card h3 {
-        font-size: 1.1em;
-    }
-    
-    .mode-buttons {
-        flex-direction: column;
-        align-items: center;
-    }
-    
-    .mode-btn {
-        min-width: 250px;
-        width: 100%;
-        max-width: 300px;
+    .start-button {
+        padding: 0.875rem 1.75rem;
+        font-size: 1rem;
     }
 }
 
-@media (max-width: 480px) {
-    .container {
-        padding: 10px;
-    }
-    
+@media (orientation: landscape) and (max-height: 500px) {
     h1 {
-        font-size: 1.5em;
-        margin-bottom: 15px;
+        font-size: 1.2rem;
+        padding: 0.5rem;
     }
     
-    #game-container {
-        padding: 15px;
-    }
-    
-    .game-list {
-        grid-template-columns: 1fr;
-        gap: 10px;
-    }
-    
-    .game-card {
-        padding: 12px;
-    }
-    
-    .mode-selection h2 {
-        font-size: 1.3em;
-    }
-    
-    .mode-btn {
-        padding: 12px 20px;
-        font-size: 1em;
-        min-width: 200px;
+    body {
+        padding: 0;
     }
 }
