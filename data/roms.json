@@ -26,5 +26,37 @@
     "e26bec31-fec3-4428-8d0d-0d7813e31d16": {
         "file": "roms/aladdin.rom",
         "name": "Aladdin"
+    },
+    "a3f7c2d1-9b4e-4a8c-b5e6-1f3d8c2a7b9e": {
+        "file": "roms/golden-axe-2.rom",
+        "name": "Golden Axe II"
+    },
+    "d8e4b1c3-7a2f-4d9e-8c5b-3e6a1f4d2b8c": {
+        "file": "roms/lion-king.rom",
+        "name": "The Lion King"
+    },
+    "f1a9c5e2-3b7d-4f8a-9e2c-6b4d8a1c3e5f": {
+        "file": "roms/mortal-kombat.rom",
+        "name": "Mortal Kombat"
+    },
+    "b4d7e1f3-8c2a-4e9d-b5f6-2c8a3e1d4f7b": {
+        "file": "roms/mortal-kombat-2.rom",
+        "name": "Mortal Kombat II"
+    },
+    "c6e2f8a4-1d9b-4c7e-a3f5-9b2d6c4e8a1f": {
+        "file": "roms/revenge-of-shinobi.rom",
+        "name": "The Revenge of Shinobi"
+    },
+    "e9b3d5f1-4c8a-4e7b-9f2c-8a5d1c3e6b4f": {
+        "file": "roms/sonic-and-knuckles.rom",
+        "name": "Sonic & Knuckles"
+    },
+    "f7c4e2a8-9d1b-4f6c-b8e3-5a7c2d9f1e4b": {
+        "file": "roms/sunset-riders.rom",
+        "name": "Sunset Riders"
+    },
+    "a2f8d3c6-5e1b-4c9a-8f7e-3d6b1c4a9e2f": {
+        "file": "roms/tiny-toon-adventures.rom",
+        "name": "Tiny Toon Adventures - Buster's Hidden Treasure"
     }
 }
