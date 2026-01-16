@@ -3,6 +3,10 @@
         "file": "roms/sonic-the-hedgehog.rom",
         "name": "Sonic the Hedgehog"
     },
+    "b2fe8f37-5ba3-4450-831e-84cda59763d0": {
+        "file": "roms/sonic-the-hedgehog-2.rom",
+        "name": "Sonic the Hedgehog 2"
+    },
     "fdad82db-c45f-48a2-96ec-5b95dcb701bc": {
         "file": "roms/ultimate-mortal-kombat-3.rom",
         "name": "Ultimate Mortal Kombat 3"
@@ -14,6 +18,10 @@
     "1c046568-0aa8-4a94-9914-f61aeec7a590": {
         "file": "roms/streets-of-rage-2.rom",
         "name": "Streets of Rage 2"
+    },
+    "fb3baf1f-fe99-4c43-aae7-d7f48efb4bb9": {
+        "file": "roms/streets-of-rage.rom",
+        "name": "Streets of Rage"
     },
     "e26bec31-fec3-4428-8d0d-0d7813e31d16": {
         "file": "roms/aladdin.rom",
