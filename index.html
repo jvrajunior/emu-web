@@ -11,6 +11,12 @@
     <main id="game-container">
         <div id="game"></div>
     </main>
+    {% if rom_data %}
+    <script>
+        // Dados da ROM injetados pelo backend
+        window.ROM_DATA = {{ rom_data | safe }};
+    </script>
+    {% endif %}
     <script src="js/emulator.js"></script>
 </body>
 </html>

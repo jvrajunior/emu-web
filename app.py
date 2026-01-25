@@ -1,10 +1,13 @@
-from fastapi import FastAPI, HTTPException, Depends
+from fastapi import FastAPI, HTTPException, Depends, Request
 from fastapi.staticfiles import StaticFiles
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, RedirectResponse, HTMLResponse
+from fastapi.templating import Jinja2Templates
 from sqlalchemy import create_engine, Column, String
 from sqlalchemy.orm import declarative_base, sessionmaker, Session
 from pydantic import BaseModel
 from pathlib import Path
+import uuid
+import json
 
 # Database setup
 Base = declarative_base()
@@ -27,7 +30,7 @@ Base.metadata.create_all(bind=engine)
 
 # Pydantic schemas
 class RomSchema(BaseModel):
-    id: str
+    id: str | None = None
     file: str
     name: str
     
@@ -43,6 +46,7 @@ class TagSchema(BaseModel):
 
 # FastAPI app
 app = FastAPI(title="Emulador Web")
+templates = Jinja2Templates(directory=".")
 
 def get_db():
     db = SessionLocal()
@@ -68,7 +72,10 @@ def get_rom(rom_id: str, db: Session = Depends(get_db)):
 @app.post("/api/roms", response_model=RomSchema)
 def create_rom(rom: RomSchema, db: Session = Depends(get_db)):
     """Cria uma nova ROM"""
-    new_rom = Rom(**rom.dict())
+    rom_data = rom.dict()
+    if not rom_data.get('id'):
+        rom_data['id'] = str(uuid.uuid4())
+    new_rom = Rom(**rom_data)
     db.add(new_rom)
     db.commit()
     db.refresh(new_rom)
@@ -141,21 +148,55 @@ def delete_tag(tag_id: str, db: Session = Depends(get_db)):
     db.commit()
     return {"detail": "Tag deletada"}
 
-# Rota catch-all para servir arquivos estáticos e index.html
-@app.get("/{path:path}")
-async def serve_static(path: str):
-    """Serve arquivos estáticos, voltando ao index.html para rotas de aplicação"""
-    file_path = Path(path)
-    
+# Rota raiz para index.html
+@app.get("/", response_class=HTMLResponse)
+async def root(request: Request):
+    """Retorna o arquivo index.html"""
+    return templates.TemplateResponse("index.html", {"request": request, "rom_data": None})
+
+# Rota catch-all para servir arquivos estáticos e resolver identificadores
+@app.get("/{identifier:path}")
+async def resolve_identifier(identifier: str, request: Request, db: Session = Depends(get_db)):
+    """Resolve identificador (ROM UUID ou TAG) no backend antes de servir"""
     # Verifica se é um arquivo que existe
+    file_path = Path(identifier)
     if file_path.exists() and file_path.is_file():
         return FileResponse(file_path)
     
-    # Para qualquer outra rota, retorna index.html (SPA routing)
-    return FileResponse("index.html")
-
-# Rota raiz para index.html
-@app.get("/")
-async def root():
-    """Retorna o arquivo index.html"""
-    return FileResponse("index.html")
+    # Remove barra inicial se houver
+    clean_identifier = identifier.lstrip('/')
+    
+    # Se estiver vazio, retorna index
+    if not clean_identifier:
+        return templates.TemplateResponse("index.html", {"request": request, "rom_data": None})
+    
+    # Verifica se é uma ROM (UUID)
+    rom = db.query(Rom).filter(Rom.id == clean_identifier).first()
+    if rom:
+        # É uma ROM, serve o index.html com os dados da ROM embutidos
+        rom_data = {
+            "id": rom.id,
+            "file": rom.file,
+            "name": rom.name
+        }
+        return templates.TemplateResponse("index.html", {
+            "request": request, 
+            "rom_data": json.dumps(rom_data)
+        })
+    
+    # Verifica se é uma TAG
+    tag = db.query(Tag).filter(Tag.id == clean_identifier).first()
+    if tag:
+        # Redireciona para o resource da tag
+        resource = tag.resource.lstrip('/')
+        if resource.startswith('http://') or resource.startswith('https://'):
+            # Redirecionamento externo
+            return RedirectResponse(url=resource, status_code=302)
+        else:
+            # Redirecionamento interno - usa a URL base da requisição
+            base_url = f"{request.url.scheme}://{request.url.netloc}"
+            redirect_url = f"{base_url}/{resource}"
+            return RedirectResponse(url=redirect_url, status_code=302)
+    
+    # Não encontrado - retorna index.html
+    return templates.TemplateResponse("index.html", {"request": request, "rom_data": None})

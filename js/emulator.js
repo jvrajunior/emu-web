@@ -1,39 +1,19 @@
-let ROM_DATABASE = {};
-let TAG_DATABASE = {};
-
 /**
- * Carrega o banco de dados de ROMs da API
+ * Carrega uma ROM específica da API pelo ID
  */
-async function loadRomDatabase() {
+async function loadRomById(romId) {
     try {
-        const response = await fetch('/api/roms');
+        const response = await fetch(`/api/roms/${romId}`);
         if (!response.ok) {
-            throw new Error('Falha ao carregar banco de dados de ROMs');
+            if (response.status === 404) {
+                return null;
+            }
+            throw new Error('Falha ao carregar ROM');
         }
-        const roms = await response.json();
-        ROM_DATABASE = Object.fromEntries(roms.map(rom => [rom.id, rom]));
-        return true;
+        return await response.json();
     } catch (error) {
-        console.error('Erro ao carregar ROMs:', error);
-        return false;
-    }
-}
-
-/**
- * Carrega o banco de dados de tags da API
- */
-async function loadTagDatabase() {
-    try {
-        const response = await fetch('/api/tags');
-        if (!response.ok) {
-            throw new Error('Falha ao carregar banco de dados de tags');
-        }
-        const tags = await response.json();
-        TAG_DATABASE = Object.fromEntries(tags.map(tag => [tag.id, tag]));
-        return true;
-    } catch (error) {
-        console.error('Erro ao carregar tags:', error);
-        return false;
+        console.error('Erro ao carregar ROM:', error);
+        return null;
     }
 }
 
@@ -46,21 +26,6 @@ function getIdentifierFromUrl() {
     const identifier = path.startsWith('/') ? path.substring(1) : path;
     // Retorna apenas se não estiver vazio e não for um arquivo HTML
     return identifier && !identifier.endsWith('.html') ? identifier : null;
-}
-
-/**
- * Redireciona para o resource associado à tag
- */
-function redirectToTagResource(tag) {
-    const resource = TAG_DATABASE[tag].resource;
-    
-    // Verifica se é URL externa
-    if (resource.startsWith('http://') || resource.startsWith('https://')) {
-        window.location.href = resource;
-    } else {
-        // Redireciona para resource interno
-        window.location.href = resource;
-    }
 }
 
 function showGameStart(rom) {
@@ -98,10 +63,19 @@ function showHelpModal() {
     `;
 
     document.getElementById('back-btn').addEventListener('click', () => {
-        const identifier = getIdentifierFromUrl();
-        if (identifier && ROM_DATABASE[identifier]) {
-            showGameStart(ROM_DATABASE[identifier]);
+        // Usa dados embutidos se disponíveis
+        if (window.ROM_DATA) {
+            showGameStart(window.ROM_DATA);
+            return;
         }
+        
+        // Fallback: carrega da API
+        const identifier = getIdentifierFromUrl();
+        loadRomById(identifier).then(rom => {
+            if (rom) {
+                showGameStart(rom);
+            }
+        });
     });
 }
 
@@ -152,26 +126,29 @@ function loadEmulator(rom) {
 }
 
 async function init() {
-    // Carrega ambos os bancos de dados
-    await Promise.all([loadRomDatabase(), loadTagDatabase()]);
-    
+    // Verifica se há dados da ROM injetados no HTML
+    if (window.ROM_DATA) {
+        // Usa os dados embutidos - sem chamada à API
+        showGameStart(window.ROM_DATA);
+        return;
+    }
+
     const identifier = getIdentifierFromUrl();
     
+    // Se não houver identificador, não faz nada (página inicial)
     if (!identifier) return;
 
-    // Verifica se é uma ROM
-    if (ROM_DATABASE[identifier]) {
-        showGameStart(ROM_DATABASE[identifier]);
+    // Tenta carregar a ROM específica da API (fallback)
+    const rom = await loadRomById(identifier);
+    
+    if (rom) {
+        // ROM encontrada, mostra tela de iniciar jogo
+        showGameStart(rom);
         return;
     }
 
-    // Verifica se é uma tag
-    if (TAG_DATABASE[identifier]) {
-        redirectToTagResource(identifier);
-        return;
-    }
-
-    // Não encontrado
+    // Se não for ROM, o backend já deve ter feito o redirecionamento da tag
+    // Se chegou aqui, o recurso não existe
     showError(`Recurso "${identifier}" não encontrado.`);
 }
 
