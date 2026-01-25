@@ -1,15 +1,17 @@
 let ROM_DATABASE = {};
+let TAG_DATABASE = {};
 
 /**
- * Carrega o banco de dados de ROMs do arquivo JSON
+ * Carrega o banco de dados de ROMs da API
  */
 async function loadRomDatabase() {
     try {
-        const response = await fetch('data/roms.json');
+        const response = await fetch('/api/roms');
         if (!response.ok) {
             throw new Error('Falha ao carregar banco de dados de ROMs');
         }
-        ROM_DATABASE = await response.json();
+        const roms = await response.json();
+        ROM_DATABASE = Object.fromEntries(roms.map(rom => [rom.id, rom]));
         return true;
     } catch (error) {
         console.error('Erro ao carregar ROMs:', error);
@@ -17,9 +19,48 @@ async function loadRomDatabase() {
     }
 }
 
-function getUrlParams() {
-    const params = new URLSearchParams(window.location.search);
-    return params.get('rom');
+/**
+ * Carrega o banco de dados de tags da API
+ */
+async function loadTagDatabase() {
+    try {
+        const response = await fetch('/api/tags');
+        if (!response.ok) {
+            throw new Error('Falha ao carregar banco de dados de tags');
+        }
+        const tags = await response.json();
+        TAG_DATABASE = Object.fromEntries(tags.map(tag => [tag.id, tag]));
+        return true;
+    } catch (error) {
+        console.error('Erro ao carregar tags:', error);
+        return false;
+    }
+}
+
+/**
+ * Extrai o identificador da URL (pathname)
+ */
+function getIdentifierFromUrl() {
+    const path = window.location.pathname;
+    // Remove barra inicial se existir
+    const identifier = path.startsWith('/') ? path.substring(1) : path;
+    // Retorna apenas se não estiver vazio e não for um arquivo HTML
+    return identifier && !identifier.endsWith('.html') ? identifier : null;
+}
+
+/**
+ * Redireciona para o resource associado à tag
+ */
+function redirectToTagResource(tag) {
+    const resource = TAG_DATABASE[tag].resource;
+    
+    // Verifica se é URL externa
+    if (resource.startsWith('http://') || resource.startsWith('https://')) {
+        window.location.href = resource;
+    } else {
+        // Redireciona para resource interno
+        window.location.href = resource;
+    }
 }
 
 function showGameStart(rom) {
@@ -57,9 +98,9 @@ function showHelpModal() {
     `;
 
     document.getElementById('back-btn').addEventListener('click', () => {
-        const romId = getUrlParams();
-        if (romId && ROM_DATABASE[romId]) {
-            showGameStart(ROM_DATABASE[romId]);
+        const identifier = getIdentifierFromUrl();
+        if (identifier && ROM_DATABASE[identifier]) {
+            showGameStart(ROM_DATABASE[identifier]);
         }
     });
 }
@@ -96,9 +137,9 @@ function loadEmulator(rom) {
     window.EJS_fullscreenOnLoaded = true;
     window.EJS_language = 'pt-BR';
     window.EJS_color = '#fff';
-    window.EJS_Buttons = {
-        'fullscreen': true
-    }
+    // window.EJS_Buttons = {
+    //     'fullscreen': true
+    // }
 
     setTimeout(() => {
         const container = document.getElementById('game-container');
@@ -107,21 +148,31 @@ function loadEmulator(rom) {
         const script = document.createElement('script');
         script.src = 'https://cdn.emulatorjs.org/stable/data/loader.js';
         document.body.appendChild(script);
-    }, 1000);
+    }, 5000);
 }
 
 async function init() {
-    const loaded = await loadRomDatabase();
-    const romId = getUrlParams();
+    // Carrega ambos os bancos de dados
+    await Promise.all([loadRomDatabase(), loadTagDatabase()]);
+    
+    const identifier = getIdentifierFromUrl();
+    
+    if (!identifier) return;
 
-    if (!romId) return;
-
-    if (!ROM_DATABASE[romId]) {
-        showError(`ROM "${romId}" não encontrada.`);
+    // Verifica se é uma ROM
+    if (ROM_DATABASE[identifier]) {
+        showGameStart(ROM_DATABASE[identifier]);
         return;
     }
 
-    showGameStart(ROM_DATABASE[romId]);
+    // Verifica se é uma tag
+    if (TAG_DATABASE[identifier]) {
+        redirectToTagResource(identifier);
+        return;
+    }
+
+    // Não encontrado
+    showError(`Recurso "${identifier}" não encontrado.`);
 }
 
 document.addEventListener('DOMContentLoaded', init);
